@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+model Bus {
+  id         Int     @id @default(autoincrement())
+  busNumber  String  @unique
+  totalSeats Int
+  seats      Seat[]
+  schedules  Schedule[]
+}
+
+model Schedule {
+  id            Int      @id @default(autoincrement())
+  bus           Bus      @relation(fields: [busId], references: [id])
+  busId         Int
+  departure     String
+  destination   String
+  departureTime DateTime
+  reservations  Reservation[]
+}
+
+model Customer {
+  id          Int           @id @default(autoincrement())
+  name        String
+  email       String        @unique
+  reservations Reservation[]
+}
+
+model Seat {
+  id        Int        @id @default(autoincrement())
+  bus       Bus        @relation(fields: [busId], references: [id])
+  busId     Int
+  seatNumber String
+  status    SeatStatus @default(AVAILABLE)
+  reservations Reservation[] // Add this line to establish the back relation
+
+  @@unique([busId, seatNumber]) // Ensures seat numbers are unique per bus
+}
+
+model Reservation {
+  id         Int      @id @default(autoincrement())
+  customer   Customer @relation(fields: [customerId], references: [id])
+  customerId Int
+  schedule   Schedule @relation(fields: [scheduleId], references: [id])
+  scheduleId Int
+  seat       Seat     @relation(fields: [seatId], references: [id])
+  seatId     Int
+  bookingDate DateTime @default(now())
+
+  @@unique([scheduleId, seatId]) // Prevents double booking of a seat
+}
+
+enum SeatStatus {
+  AVAILABLE
+  RESERVED
+}
