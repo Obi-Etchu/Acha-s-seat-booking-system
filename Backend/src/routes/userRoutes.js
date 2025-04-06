@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { getAlluser,
         getSingleUser,
-        createUser} from '../controlllers/users'
+        createUser} from '../controlllers/users.js'
 
 const router = Router()
 

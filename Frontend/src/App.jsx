@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { BusList } from './components/BusList';
 import Welcome from './components/Welcome';
 import './index.css';
+import Home from './pages/Home';
 
 function App() {
   const [showWelcome, setShowWelcome] = useState(true);
@@ -50,7 +51,7 @@ function App() {
       {showWelcome ? (
         <Welcome onGetStarted={() => setShowWelcome(false)} />
       ) : (
-        <BusList buses={buses} onBookSeat={handleBookSeat} />
+        <Home buses={buses} onBookSeat={handleBookSeat}/>
       )}
     </div>
   );
